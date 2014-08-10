@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 	DIR *dir;
 	char filename[FILENAME_MAX+1];
 
-#if 0
+#if 1
 	{
 
 		if ((dir = opendir(config_dir)) == NULL)
@@ -78,8 +78,6 @@ int main(int argc, char** argv)
 					int ret = yylex();
 					if(ret == 0)
 						break;
-					if(ret == TOKEN)
-						printf("%s\n", yyget_text());
 				}
 
 				fclose(input);
