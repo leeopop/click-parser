@@ -25,8 +25,6 @@ enum NodeType
 	Node_ARROW,
 };
 
-
-
 typedef struct {
 	enum NodeType type;
 	char payload[0];
@@ -87,4 +85,5 @@ Node* makeData(enum NodeType type, const char* string);
 void init_map(Map* map);
 void* find_map(Map* map, const void* key, int keylen);
 void add_map(Map* map, const void* key, int keylen, void* item);
+
 #endif /* NODE_H_ */

@@ -25,13 +25,13 @@
 //If you want to run this test, you can replace the router's addresses with your machine' IP6 Addresses and Ethernet Addresses in the following elements: IP6NDAdvertiser, IP6NDSolicitor, LookupIP6Route. 
 
 
-	nda::IP6NDAdvertiser(3ffe:1ce1:2:0:200::1/128 00:A0:C9:9C:FD:9E, 
+	nda :: IP6NDAdvertiser(3ffe:1ce1:2:0:200::1/128 00:A0:C9:9C:FD:9E, 
 			fe80::2a0:c9ff:fe9c:fd9e/128 00:A0:C9:9C:FD:9E); 
 
 	nds :: IP6NDSolicitor(fe80::2a0:c9ff:fe9c:fd9e, 00:a0:c9:9c:fd:9e);
 
 	FromDevice(eth0, 1)
-  		-> c::Classifier(12/86dd 20/3aff 54/87,
+  		-> c :: Classifier(12/86dd 20/3aff 54/87,
 		         12/86dd 20/3aff 54/88,
 			 12/86dd); 
 	
@@ -53,7 +53,7 @@
 			0::ffff:0:0/96 ::0 2,
   			::0/0 ::c0a8:1 3);
 	
-	rt[1] 	-> dh:: DecIP6HLIM
+	rt[1] 	-> dh :: DecIP6HLIM
 		-> [0]nds;
 	rt[0] 	-> Print(route0-ok, 200) -> Discard;
 	rt[2] 	-> Print(route2-ok, 200) -> Discard;

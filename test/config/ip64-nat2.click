@@ -26,8 +26,8 @@
 //frenulum: nc ::18.26.4.125  9 (for UDP test)
 
 
-arp::ARPQuerier(18.26.4.116, 00:a0:c9:9c:fd:9e);
-arr::ARPResponder(18.26.4.116 00:a0:c9:9c:fd:9e);
+arp :: ARPQuerier(18.26.4.116, 00:a0:c9:9c:fd:9e);
+arr :: ARPResponder(18.26.4.116 00:a0:c9:9c:fd:9e);
 
 nda :: IP6NDAdvertiser(
 	3ffe:1ce1:2:0:200::1/128 00:A0:C9:9C:FD:9E, 
@@ -128,8 +128,8 @@ rt[3]	->Print(rt3, 200) ->Discard;
 	
 rt6[0] 	-> Print(route60-ok, 200) -> Discard;
 rt6[1] 	-> Print(route61-ok, 200) 
-	-> dh1:: DecIP6HLIM-> [0]nds;
-rt6[2] 	-> dh2:: DecIP6HLIM 
+	-> dh1 :: DecIP6HLIM-> [0]nds;
+rt6[2] 	-> dh2 :: DecIP6HLIM 
 	-> Print(route62-ok, 200)  -> Discard;
 rt6[3] 	-> Print(route63-ok, 200) 
 	-> [0]at;	

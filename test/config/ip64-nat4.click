@@ -22,11 +22,11 @@
 //frenulum: telnet ::(any IPv4 site's address) as long as the route for that site go through 3ffe:1ce1:2:0:200::1
 
 
-arp::ARPQuerier(18.26.4.116, 00:a0:c9:9c:fd:9e);
-arr::ARPResponder(18.26.4.116 00:a0:c9:9c:fd:9e);
-arr2::ARPResponder(18.26.4.17 00:a0:c9:9c:fd:9e);
+arp :: ARPQuerier(18.26.4.116, 00:a0:c9:9c:fd:9e);
+arr :: ARPResponder(18.26.4.116 00:a0:c9:9c:fd:9e);
+arr2 :: ARPResponder(18.26.4.17 00:a0:c9:9c:fd:9e);
 
-q::Queue(1024);
+q :: Queue(1024);
 
 nda :: IP6NDAdvertiser(
 	3ffe:1ce1:2:0:200::1/128 00:A0:C9:9C:FD:9E, 
@@ -130,8 +130,8 @@ rt[3]	->Print(rt3, 200)
 
 rt6[0] 	-> Print(route60-ok, 200) -> Discard;
 rt6[1] 	-> Print(route61-ok, 200) 
-	-> dh1:: DecIP6HLIM-> [0]nds;
-rt6[2] 	-> dh2:: DecIP6HLIM 
+	-> dh1 :: DecIP6HLIM-> [0]nds;
+rt6[2] 	-> dh2 :: DecIP6HLIM 
 	-> Print(route62-ok, 200)  -> Discard;
 rt6[3] 	-> Print(route63-ok, 200) 
 	-> [0]at;	

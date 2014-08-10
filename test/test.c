@@ -49,41 +49,66 @@ int main(int argc, char** argv)
 
 	struct dirent *entry;
 	DIR *dir;
-
-	if ((dir = opendir(config_dir)) == NULL)
-	{
-		fprintf(stderr, "Can't open %s\n", config_dir);
-		return 0;
-	}
-
 	char filename[FILENAME_MAX+1];
 
-	while ((entry = readdir(dir)) != NULL)
 	{
-		if(entry->d_type == DT_REG)
+
+		if ((dir = opendir(config_dir)) == NULL)
 		{
-			snprintf(filename, sizeof(filename), "%s/%s", config_dir, entry->d_name);
+			fprintf(stderr, "Can't open %s\n", config_dir);
+			return 0;
+		}
 
-			FILE* input = fopen(filename, "r");
-
-			yylex_destroy();
-			yyset_in(input);
-			while(1)
+		while ((entry = readdir(dir)) != NULL)
+		{
+			if(entry->d_type == DT_REG)
 			{
-				int lex_ret = yylex();
-				if(lex_ret == 0)
-					break;
-				if(lex_ret == OTHER_VALUE)
-				{
-					printf("%s ", filename);
-					//printf("%d, %d: %s\n",lex_ret, yyget_leng(), yyget_text());
-					break;
-				}
-			}
+				snprintf(filename, sizeof(filename), "%s/%s", config_dir, entry->d_name);
 
-			fclose(input);
+				FILE* input = fopen(filename, "r");
+
+				yylex_destroy();
+				yyset_in(input);
+
+				printf("%s\n", filename);
+				while(1)
+				{
+					int ret = yylex();
+					if(ret == 0)
+						break;
+					if(ret == TOKEN)
+						printf("%s\n", yyget_text());
+				}
+
+				fclose(input);
+			}
 		}
 	}
+#if 0
+	{
 
+		if ((dir = opendir(config_dir)) == NULL)
+		{
+			fprintf(stderr, "Can't open %s\n", config_dir);
+			return 0;
+		}
+
+		while ((entry = readdir(dir)) != NULL)
+		{
+			if(entry->d_type == DT_REG)
+			{
+				snprintf(filename, sizeof(filename), "%s/%s", config_dir, entry->d_name);
+
+				FILE* input = fopen(filename, "r");
+
+				int ret = create_graph(input);
+				if(ret != 0)
+					printf("%s\n", filename);
+
+				fclose(input);
+			}
+		}
+	}
+#endif
 	return 0;
 }

@@ -1,17 +1,17 @@
 %{
 #include "click_lex.h"
 #include "node.h"
+#include "resource.h"
 
 #define YYSTYPE Node*
-
-static List* modules = 0;
-static Map* symbol_table = 0;
-static List* edges = 0;
+extern List* __click_modules;
+extern Map* __click_symbol_table;
+extern List* __click_edges;
 %}
 
 
-%token IDENTIFIER DEFINE ARROW_TAIL ARROW_HEAD
-%token IPv4_ADDR IPv6_ADDR IPv4_MASK IPv6_MASK DEC_INTEGER HEX_INTEGER ETHER_ADDR STRING OTHER_VALUE
+%token IDENTIFIER DEFINE ARROW_TAIL ARROW_HEAD ARROW TOKEN
+%token IPv4_ADDR IPv6_ADDR IPv4_MASK IPv6_MASK DEC_INTEGER HEX_INTEGER ETHER_ADDR STRING OTHER_VALUE INTEGER
 
 %start program
 
@@ -106,7 +106,7 @@ value:
 value_pair:
 	value '/' value
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Pair));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Pair));
 		Pair* pair = (Pair*)ret->payload;
 		pair->left = $1;
 		pair->right = $3;
@@ -161,7 +161,7 @@ value_set:
 	|
 	value2
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(ValueList));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(ValueList));
 		ValueList* vlist = (ValueList*)ret->payload;
 		init_list(vlist);
 		
@@ -198,7 +198,7 @@ arg_list:
 	|
 	value_set
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(ArgList));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(ArgList));
 		ArgList* alist = (ArgList*)ret->payload;
 		init_list(alist);
 		ret->type = Node_ARG_LIST;
@@ -208,7 +208,7 @@ arg_list:
 	|
 	ARROW_TAIL
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(ArgList));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(ArgList));
 		ArgList* alist = (ArgList*)ret->payload;
 		init_list(alist);
 		ret->type = Node_ARG_LIST;
@@ -220,30 +220,30 @@ arg_list:
 module:
 	identifier '(' arg_list ')'
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Module));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Module));
 		ret->type = Node_MODULE;
 		Module* module = (Module*)ret->payload;
 		module->name = $1;
 		module->args = $3;
-		module->index = modules->len;
-		add_list(modules, ret);
+		module->index = __click_modules->len;
+		add_list(__click_modules, ret);
 		$$ = ret;
 	}
 	|
 	identifier '(' ')'
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Module));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Module));
 		ret->type = Node_MODULE;
 		Module* module = (Module*)ret->payload;
 		module->name = $1;
-		Node* ret2 = (Node*)malloc(sizeof(Node) + sizeof(ArgList));
+		Node* ret2 = (Node*)alloc_resource(sizeof(Node) + sizeof(ArgList));
 		ArgList* alist = (ArgList*)ret2->payload;
 		init_list(alist);
 		ret2->type = Node_ARG_LIST;
 		
 		module->args = ret2;
-		module->index = modules->len;
-		add_list(modules, ret);
+		module->index = __click_modules->len;
+		add_list(__click_modules, ret);
 		$$ = ret;
 	}
 
@@ -262,16 +262,16 @@ chain_element:
 		}
 		Node* iter = 0;
 		const char* key = ($1->payload);
-		iter = find_map(symbol_table, key, strlen(key));
+		iter = find_map(__click_symbol_table, key, strlen(key));
 		if(iter == 0)
 		{
-			Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Module));
+			Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Module));
 			ret->type = Node_MODULE;
 			Module* module = (Module*)ret->payload;
 			module->name = $1;
-			module->index = modules->len;
+			module->index = __click_modules->len;
 			
-			Node* ret2 = (Node*)malloc(sizeof(Node) + sizeof(ArgList));
+			Node* ret2 = (Node*)alloc_resource(sizeof(Node) + sizeof(ArgList));
 			ArgList* alist = (ArgList*)ret2->payload;
 			init_list(alist);
 			ret2->type = Node_ARG_LIST;
@@ -279,7 +279,7 @@ chain_element:
 			module->args = ret2;
 			
 			
-			add_list(modules, ret);
+			add_list(__click_modules, ret);
 			$$ = ret;
 		}
 		else
@@ -295,14 +295,14 @@ chain_element:
 		}
 		Node* iter = 0;
 		const char* key = ($1->payload);
-		iter = find_map(symbol_table, key, strlen(key));
+		iter = find_map(__click_symbol_table, key, strlen(key));
 		if(iter != 0)
 		{
 			printf("%d ",__LINE__);printf("Redefinition of module %s\n", $1->payload);
 			YYABORT;
 		}
 		
-		add_map(symbol_table, key, strlen(key), $3);
+		add_map(__click_symbol_table, key, strlen(key), $3);
 		$$ = $3;
 	}
 	|
@@ -317,27 +317,27 @@ chain_element:
 		}
 		Node* iter = 0;
 		const char* key = ($1->payload);
-		iter = find_map(symbol_table, key, strlen(key));
+		iter = find_map(__click_symbol_table, key, strlen(key));
 		if(iter != 0)
 		{
 			printf("%d ",__LINE__);printf("Redefinition of module %s\n", $1->payload);
 			YYABORT;
 		}
 		
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Module));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Module));
 		ret->type = Node_MODULE;
 		Module* module = (Module*)ret->payload;
 		module->name = $3;
-		module->index = modules->len;
+		module->index = __click_modules->len;
 		
-		Node* ret2 = (Node*)malloc(sizeof(Node) + sizeof(ArgList));
+		Node* ret2 = (Node*)alloc_resource(sizeof(Node) + sizeof(ArgList));
 		ArgList* alist = (ArgList*)ret2->payload;
 		init_list(alist);
 		ret2->type = Node_ARG_LIST;
 		
 		module->args = ret2;
-		add_list(modules, ret);
-		add_map(symbol_table, key, strlen(key), ret);
+		add_list(__click_modules, ret);
+		add_map(__click_symbol_table, key, strlen(key), ret);
 		$$ = ret;
 	}
 	;
@@ -345,7 +345,7 @@ chain_element:
 arrow:
 	ARROW_TAIL ARROW_HEAD
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Arrow));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Arrow));
 		ret->type = Node_ARROW;
 		Arrow* arrow = (Arrow*)ret->payload;
 		arrow->head_outport = 0;
@@ -362,7 +362,7 @@ arrow:
 			printf("%d ",__LINE__);printf("Type checking failed\n");
 			YYABORT;
 		}
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Arrow));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Arrow));
 		ret->type = Node_ARROW;
 		Arrow* arrow = (Arrow*)ret->payload;
 		arrow->head_outport = (int)(*((int*)$2->payload));
@@ -379,7 +379,7 @@ arrow:
 			printf("%d ",__LINE__);printf("Type checking failed\n");
 			YYABORT;
 		}
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Arrow));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Arrow));
 		ret->type = Node_ARROW;
 		Arrow* arrow = (Arrow*)ret->payload;
 		arrow->head_outport = 0;
@@ -402,7 +402,7 @@ arrow:
 			printf("%d ",__LINE__);printf("Type checking failed\n");
 			YYABORT;
 		}
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(Arrow));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Arrow));
 		ret->type = Node_ARROW;
 		Arrow* arrow = (Arrow*)ret->payload;
 		arrow->head_outport = (int)(*((int*)$2->payload));
@@ -415,7 +415,7 @@ arrow:
 chain_element2:
 	chain_element
 	{
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(ChainElement));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(ChainElement));
 		ret->type = Node_CHAIN_ELEMENT;
 		ChainElement* chain = (ChainElement*)ret->payload;
 		chain->head = $1;
@@ -445,7 +445,7 @@ chain:
 		}
 		Arrow* arrow = (Arrow*)$2->payload;
 		
-		Node* ret = (Node*)malloc(sizeof(Node) + sizeof(ChainElement));
+		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(ChainElement));
 		ret->type = Node_CHAIN_ELEMENT;
 		ChainElement* chain = (ChainElement*)ret->payload;
 		chain->head = ((ChainElement*)$1->payload)->head;
@@ -453,13 +453,13 @@ chain:
 		
 		$$ = ret;
 		
-		Chain* edge = (Chain*)malloc(sizeof(Chain));
+		Chain* edge = (Chain*)alloc_resource(sizeof(Chain));
 		edge->head = ((ChainElement*)$1->payload)->tail;
 		edge->head_outport = arrow->head_outport;
 		edge->tail_inport = arrow->tail_inport;
 		edge->tail = ((ChainElement*)$3->payload)->head;
 		
-		add_list(edges, edge);
+		add_list(__click_edges, edge);
 	}
 	|
 	chain_element2
@@ -476,6 +476,6 @@ statement:
 
 int yyerror(const char* val)
 {
-	printf("%d ",__LINE__);printf("Error occuered: %s\n", val);
+	printf("%d ",yyget_lineno());printf("Error occuered: %s, %s\n", val, yytext);
 	return 1;
 }
