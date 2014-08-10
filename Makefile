@@ -7,28 +7,28 @@ GRAMMAR_DIR = grammar
 OUTPUT_DIR = build
 
 GRAMMAR = $(GRAMMAR_DIR)/click.l  $(GRAMMAR_DIR)/click.y
-GRAMMAR_SRC = $(SRC_DIR)/click_lex.c $(SRC_DIR)/click_yacc.c
+GRAMMAR_SRC = $(GRAMMAR_DIR)/click_lex.c $(GRAMMAR_DIR)/click_yacc.c
 
-SRCS = $(wildcard $$(SRC_DIR)/*.c) $(GRAMMAR_SRC)
-OBJS = $(SRCS:.c=.o)
-HEADERS = $(wildcard $$(SRC_DIR)/*.h)
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(SRCS:.c=.o) $(GRAMMAR_SRC:.c=.o)
+HEADERS = $(wildcard $(SRC_DIR)/*.h)
 EXEC = test_parser
 
 
 
 LIBS = 
 LDFLAGS = 
-CFLAGS = -g -O0 -I$(SRC_DIR)
+CFLAGS = -g -O0 -I$(SRC_DIR) -I$(GRAMMAR_DIR)
 
 DEPS = .make.dep
 
 .PHONY: all clean
 
-all: $(DEPS) $(EXEC)
+all: $(GRAMMAR_SRC) $(DEPS) $(EXEC)
 
 $(GRAMMAR_SRC): $(GRAMMAR)
-	$(LEX) --header-file=$(SRC_DIR)/click_lex.h --outfile=$(SRC_DIR)/click_lex.c -Cr $(GRAMMAR_DIR)/click.l
-	$(YACC) --defines=$(SRC_DIR)/click_yacc.h --output=$(SRC_DIR)/click_yacc.c $(GRAMMAR_DIR)/click.y
+	$(LEX) --header-file=$(GRAMMAR_DIR)/click_lex.h --outfile=$(GRAMMAR_DIR)/click_lex.c -Cr $(GRAMMAR_DIR)/click.l
+	$(YACC) --defines=$(GRAMMAR_DIR)/click_yacc.h --output=$(GRAMMAR_DIR)/click_yacc.c $(GRAMMAR_DIR)/click.y
 	
 nslex.cc nslex.hh: nshader.l
 	flex -o nslex.cc --header-file=nslex.hh -Cr nshader.l
@@ -38,7 +38,7 @@ $(EXEC): $(OBJS) test/test.o
 	$(CC) $(OBJS) test/test.o -o $(OUTPUT_DIR)/$@ $(LDFLAGS) $(LIBS)
 
 clean:
-	rm -f $(EXEC) test/*.o $(SRC_DIR)/*.o $(DEPS)
+	rm -f $(EXEC) test/*.o $(SRC_DIR)/*.o $(DEPS) $(GRAMMAR_SRC)
 
-$(DEPS): $(SRCS) $(HEADERS)
-	@$(CC) $(CFLAGS) -MM $(SRCS) > $(DEPS);
+$(DEPS): $(SRCS) $(HEADERS) $(GRAMMAR_SRC)
+	@$(CC) $(CFLAGS) -MM $(SRCS) $(GRAMMAR_SRC) > $(DEPS);
