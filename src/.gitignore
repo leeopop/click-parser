@@ -1,0 +1,5 @@
+/click_lex.c
+/click_lex.h
+/click_yacc.c
+/click_yacc.h
+*.o
