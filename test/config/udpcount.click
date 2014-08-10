@@ -9,15 +9,15 @@
 // addresses.
 AddressInfo(the_interface 1.0.0.1 0:0:c0:8a:67:ef);
 
-classifier	:: Classifier(12/0800 /* IP packets */,
-			      12/0806 20/0001 /* ARP requests */,
-			      - /* everything else */);
-ip_classifier	:: IPClassifier(dst udp port 1234 /* relevant UDP packets */,
-				- /* everything else */);
+classifier	:: Classifier(12/0800 ,
+			      12/0806 20/0001 ,
+			      - );
+ip_classifier	:: IPClassifier(dst udp port 1234 ,
+				- );
 in_device	:: PollDevice(the_interface);
 out		:: Queue(200) -> ToDevice(the_interface);
 to_host		:: ToHost;
-ctr		:: Counter /* or AverageCounter */;
+ctr		:: Counter ;
 
 in_device -> classifier
 	-> CheckIPHeader(14, CHECKSUM false) // don't check checksum for speed
