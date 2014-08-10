@@ -15,6 +15,7 @@
 
 #include "click_lex.h"
 #include "click_yacc.h"
+#include "parser.h"
 
 int main(int argc, char** argv)
 {
@@ -105,9 +106,16 @@ int main(int argc, char** argv)
 
 				FILE* input = fopen(filename, "r");
 
-				int ret = create_graph(input);
-				if(ret != 0)
+				ParseInfo* info  = click_parse_configuration(input, 0, 0, 0);
+				if(info == 0)
+					printf("ERROR: %s\n", filename);
+				else
+				{
 					printf("%s\n", filename);
+
+					printf("%d module, %d root, %d leaf\n", click_num_module(info), click_num_root(info), click_num_leaf(info));
+				}
+				click_destroy_configuration(info);
 
 				fclose(input);
 			}
