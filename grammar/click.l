@@ -20,18 +20,12 @@ IPv6_MASK {IPv6}[/]{DIGIT}+
 "//"[^\n]*"\n" {  }
 L?\"(\\.|[^\\"])*\"	{ return(STRING); }
 
-"elementclass" { return ELEMENTCLASS; }
-
 {IPv4_MASK} { return IPv4_MASK; }
 {IPv6_MASK} { return IPv6_MASK; }
-[$]{FIRST_WORD}{WORD}* { return VARIABLE; }
-"|" { return '|'; }
 "(" { return '('; }
 ")" { return ')'; }
 "[" { return '['; }
 "]" { return ']'; }
-"{" { return '{'; }
-"}" { return '}'; }
 "," { return ','; }
 ";" { return ';'; }
 "/" { return '/'; }
