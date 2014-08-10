@@ -40,11 +40,8 @@ Node* makeData(enum NodeType type, const char* string)
 		ret->payload[end-start] = 0;
 		return ret;
 	}
-	case Node_IPv4_ADDR:
-	case Node_IPv6_ADDR:
-	case Node_DEC_INTEGER:
-	case Node_HEX_INTEGER:
-	case Node_ETHER_ADDR:
+	case Node_INTEGER:
+	case Node_TOKEN:
 	case Node_IDENTIFIER:
 	{
 		const char* start, *end;

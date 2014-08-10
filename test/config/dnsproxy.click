@@ -20,7 +20,7 @@ Idle
                       9/11 22/0035,  // IP/udp/dns
                       -);
 
-rw :: IPRewriter(pattern 1.1.1.1 1024-65535 1.0.0.1 - 0 1);
+rw :: IPRewriter(pattern 1.1.1.1 1024_65535 1.0.0.1 , 0 1);
 
 // From proxy program.
 cl[0] -> CheckIPHeader -> rw;

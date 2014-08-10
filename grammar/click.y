@@ -10,8 +10,8 @@ extern List* __click_edges;
 %}
 
 
-%token IDENTIFIER DEFINE ARROW_TAIL ARROW_HEAD ARROW TOKEN
-%token IPv4_ADDR IPv6_ADDR IPv4_MASK IPv6_MASK DEC_INTEGER HEX_INTEGER ETHER_ADDR STRING OTHER_VALUE INTEGER
+%token IDENTIFIER DEFINE ARROW_TAIL ARROW_HEAD 
+%token TOKEN INTEGER STRING
 
 %start program
 
@@ -40,20 +40,9 @@ identifier:
 	;
 
 integer:
-	DEC_INTEGER
+	INTEGER
 	{
-		Node* ret = makeData(Node_DEC_INTEGER, yytext);
-		if(!ret)
-		{
-			printf("%d ",__LINE__);printf("Node creation failed\n");
-			YYABORT;
-		}
-		$$ = ret;
-	}
-	|
-	HEX_INTEGER
-	{
-		Node* ret = makeData(Node_HEX_INTEGER, yytext);
+		Node* ret = makeData(Node_INTEGER, yytext);
 		if(!ret)
 		{
 			printf("%d ",__LINE__);printf("Node creation failed\n");
@@ -64,54 +53,19 @@ integer:
 	;
 
 value:
-	IPv4_ADDR
-	{
-		Node* ret = makeData(Node_IPv4_ADDR, yytext);
-		if(!ret)
-		{
-			printf("%d ",__LINE__);printf("Node creation failed\n");
-			YYABORT;
-		}
-		$$ = ret;
-	}
-	|
-	IPv6_ADDR
-	{
-		Node* ret = makeData(Node_IPv6_ADDR, yytext);
-		if(!ret)
-		{
-			printf("%d ",__LINE__);printf("Node creation failed\n");
-			YYABORT;
-		}
-		$$ = ret;
-	}
-	|
 	integer
 	{
 		$$ = $1;
 	}
 	|
-	ETHER_ADDR
+	string
 	{
-		Node* ret = makeData(Node_ETHER_ADDR, yytext);
-		if(!ret)
-		{
-			printf("%d ",__LINE__);printf("Node creation failed\n");
-			YYABORT;
-		}
-		$$ = ret;
+		$$ = $1;
 	}
-	;
-
-value_pair:
-	value '/' value
+	|
+	identifier
 	{
-		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Pair));
-		Pair* pair = (Pair*)ret->payload;
-		pair->left = $1;
-		pair->right = $3;
-		ret->type = Node_PAIR;
-		$$ = ret;
+		$$ = $1;
 	}
 	;
 
@@ -126,28 +80,21 @@ string:
 		}
 		$$ = ret;
 	}
-	;	
-
-value2:
-	string
 	|
-	value_pair
+	TOKEN
 	{
-		$$ = $1;
-	}
-	|
-	value
-	{
-		$$ = $1;
-	}
-	|
-	identifier
-	{
-		$$ = $1;
+		Node* ret = makeData(Node_TOKEN, yytext);
+		if(!ret)
+		{
+			printf("%d ",__LINE__);printf("Node creation failed\n");
+			YYABORT;
+		}
+		$$ = ret;
 	}
 	;
+
 value_set:
-	value_set value2
+	value_set value
 	{
 		if($1->type != Node_VALUE_LIST)
 		{
@@ -159,7 +106,7 @@ value_set:
 		$$ = $1;
 	}
 	|
-	value2
+	value
 	{
 		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(ValueList));
 		ValueList* vlist = (ValueList*)ret->payload;
@@ -357,7 +304,7 @@ arrow:
 	'[' integer ']' ARROW_TAIL ARROW_HEAD
 	{
 		Node* num1 = $2;
-		if(num1->type != Node_DEC_INTEGER && num1->type != Node_HEX_INTEGER)
+		if(num1->type != Node_INTEGER)
 		{
 			printf("%d ",__LINE__);printf("Type checking failed\n");
 			YYABORT;
@@ -365,7 +312,7 @@ arrow:
 		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Arrow));
 		ret->type = Node_ARROW;
 		Arrow* arrow = (Arrow*)ret->payload;
-		arrow->head_outport = (int)(*((int*)$2->payload));
+		arrow->head_outport = atoi($2->payload);
 		arrow->tail_inport = 0;
 		
 		$$ = ret;
@@ -374,7 +321,7 @@ arrow:
 	ARROW_TAIL ARROW_HEAD '[' integer ']'
 	{
 		Node* num2 = $4;
-		if(num2->type != Node_DEC_INTEGER && num2->type != Node_HEX_INTEGER)
+		if(num2->type != Node_INTEGER)
 		{
 			printf("%d ",__LINE__);printf("Type checking failed\n");
 			YYABORT;
@@ -383,7 +330,7 @@ arrow:
 		ret->type = Node_ARROW;
 		Arrow* arrow = (Arrow*)ret->payload;
 		arrow->head_outport = 0;
-		arrow->tail_inport = (int)(*((int*)$4->payload));
+		arrow->tail_inport = atoi($4->payload);
 		
 		$$ = ret;
 	}
@@ -391,13 +338,13 @@ arrow:
 	'[' integer ']' ARROW_TAIL ARROW_HEAD '[' integer ']'
 	{
 		Node* num1 = $2;
-		if(num1->type != Node_DEC_INTEGER && num1->type != Node_HEX_INTEGER)
+		if(num1->type != Node_INTEGER)
 		{
 			printf("%d ",__LINE__);printf("Type checking failed\n");
 			YYABORT;
 		}
 		Node* num2 = $7;
-		if(num2->type != Node_DEC_INTEGER && num2->type != Node_HEX_INTEGER)
+		if(num2->type != Node_INTEGER)
 		{
 			printf("%d ",__LINE__);printf("Type checking failed\n");
 			YYABORT;
@@ -405,8 +352,8 @@ arrow:
 		Node* ret = (Node*)alloc_resource(sizeof(Node) + sizeof(Arrow));
 		ret->type = Node_ARROW;
 		Arrow* arrow = (Arrow*)ret->payload;
-		arrow->head_outport = (int)(*((int*)$2->payload));
-		arrow->tail_inport = (int)(*((int*)$7->payload));
+		arrow->head_outport = atoi($2->payload);
+		arrow->tail_inport = atoi($7->payload);
 		
 		$$ = ret;
 	}

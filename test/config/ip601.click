@@ -55,14 +55,14 @@
 	
 	rt[1] 	-> dh :: DecIP6HLIM
 		-> [0]nds;
-	rt[0] 	-> Print(route0-ok, 200) -> Discard;
-	rt[2] 	-> Print(route2-ok, 200) -> Discard;
-	rt[3] 	-> Print(route3-ok, 200) -> Discard;
+	rt[0] 	-> Print(route0_ok, 200) -> Discard;
+	rt[2] 	-> Print(route2_ok, 200) -> Discard;
+	rt[3] 	-> Print(route3_ok, 200) -> Discard;
 	
 	dh[1]	-> ICMP6Error(3ffe:1ce1:2:0:200::1, 3, 0)
 		-> [0]nds;
 	
-	nds[0]	//-> Print(nds0-ok, 200)
+	nds[0]	//-> Print(nds0_ok, 200)
 		-> ToDevice(eth0);
 
 	

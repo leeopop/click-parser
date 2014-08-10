@@ -51,6 +51,7 @@ int main(int argc, char** argv)
 	DIR *dir;
 	char filename[FILENAME_MAX+1];
 
+#if 0
 	{
 
 		if ((dir = opendir(config_dir)) == NULL)
@@ -84,7 +85,10 @@ int main(int argc, char** argv)
 			}
 		}
 	}
-#if 0
+#endif
+
+
+#if 1
 	{
 
 		if ((dir = opendir(config_dir)) == NULL)

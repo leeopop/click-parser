@@ -10,13 +10,9 @@
 
 enum NodeType
 {
-	Node_IPv4_ADDR,
-	Node_IPv6_ADDR,
-	Node_DEC_INTEGER,
-	Node_HEX_INTEGER,
-	Node_ETHER_ADDR,
+	Node_INTEGER,
 	Node_STRING,
-	Node_PAIR,
+	Node_TOKEN,
 	Node_IDENTIFIER,
 	Node_VALUE_LIST,
 	Node_ARG_LIST,

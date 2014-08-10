@@ -1,4 +1,4 @@
-// simple-ipsec.click An IP Router Configuration with IPsec/ESP support
+// simple_ipsec.click An IP Router Configuration with IPsec/ESP support
  
 // This file is an extended version of a canonical IP router that also supports
 // IPsec ESP tunnels between gateways
@@ -57,8 +57,8 @@ t :: Tee(3);
 c0[1] -> t;
 c1[1] -> t;
 t[0] -> tol;
-t[1] ->[1]arpq0
-t[2] ->[1]arpq1
+t[1] -> [1]arpq0;
+t[2] -> [1]arpq1;
  
 // Connect ARP outputs to the interface queues.
 arpq0 -> out0;
@@ -99,9 +99,9 @@ c1[0] -> ar1 -> out1;
 		        18.26.8.0/24 18.26.4.1 1 234 ABCDEFFF001DEFD2354550FE40CD708E 112233EE556677888877665544332211 300 64);
  
 // IPsec incoming packet IP table visit order 
-// rt[0]->rt[4]
+// rt[0] -> rt[4]
 // IPsec outgoing packet IP table visit order
-// rt[1]->rt[3]
+// rt[1] -> rt[3]
  
 // Hand incoming IP packets to the routing table.
 // CheckIPHeader checks all the lengths and length fields
@@ -139,7 +139,7 @@ rt[3] -> DropBroadcasts
       -> FixIPSrc(18.26.4.24)
       -> dt1 :: DecIPTTL
       -> fr1 :: IPFragmenter(1500)
-      -> [0]arpq0
+      -> [0]arpq0;
  
 // Canonical IP router processing paths
 // we've committed to a
@@ -147,7 +147,7 @@ rt[3] -> DropBroadcasts
 // Check paint to see if a redirect is required.
 // Process record route and timestamp IP options.
 // Fill in missing ip_src fields.
-// Discard packets that arrived over link-level broadcast or multicast.
+// Discard packets that arrived over link_level broadcast or multicast.
 // Decrement and check the TTL after deciding to forward.
 // Fragment.
 // Send outgoing packets through ARP to the interfaces.
@@ -161,7 +161,7 @@ rt[4] -> DropBroadcasts
       -> [0]arpq1;
  
 // DecIPTTL[1] emits packets with expired TTLs.
-// Reply with ICMPs. Rate-limit them?
+// Reply with ICMPs. Rate_limit them?
 dt1[1] -> ICMPError(18.26.4.24, timeexceeded) -> [0]rt;
 dt2[1] -> ICMPError(18.26.4.24, timeexceeded) -> [0]rt;
  

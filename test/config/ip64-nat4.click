@@ -1,8 +1,8 @@
-//ip64-nat4.click test GT64: dynamic address binding of AT and PT
+//ip64_nat4.click test GT64: dynamic address binding of AT and PT
 //router and translator: mindwipe
 //00:a0:c9:9c:fd:9e, 18.26.4.116, 3ffe:1ce1:2:0:200::1, fe80::2a0:c9ff:fe9c:fd9e
-// 6-only node: frenulum 3ffe:1ce1:2::1, ::ffff:0.0.0.2 (mapped 4 address: 18.26.4.17 - shakespeare's unused address)
-// 4-only node: web.mit.edu: 18.7.21.69 (test for ping, telnet)
+// 6_only node: frenulum 3ffe:1ce1:2::1, ::ffff:0.0.0.2 (mapped 4 address: 18.26.4.17 - shakespeare's unused address)
+// 4_only node: web.mit.edu: 18.7.21.69 (test for ping, telnet)
 
 // frenulum can ping6 ::18.26.4.125
 // you can also test telnet (port 79, 80, 5001) finger, http, and ttcp
@@ -12,7 +12,7 @@
 //This is a static mapping test
 
 //mindwipe: in click/userlevel directory:
-//mindwipe: ./click ../conf/ip64-nat4.click
+//mindwipe: ./click ../conf/ip64_nat4.click
 
 //frenulum: route delete -inet6 ::18.7.21.69 or route flush -inet6
 //frenulum: route add -inet6 ::18.7.21.69 3ffe:1ce1:2:0:200::1
@@ -71,7 +71,7 @@ at :: AddressTranslator(
 	0,
 	3ffe:1ce1:2::1 ::18.26.4.17,
 	
-	0)
+	0);
 
 //pt :: ProtocolTranslator();
 pt64 :: ProtocolTranslator64();
@@ -101,23 +101,23 @@ c[4] 	-> arr2
 
 q	-> to_eth0 ;
 	
-c[5] 	//-> Print(arp-reply, 200) 
+c[5] 	//-> Print(arp_reply, 200) 
 	->[1]arp;
 	
-c[6] 	//-> Print(c5-normal-ip-pkt, 200) 
+c[6] 	//-> Print(c5_normal_ip_pkt, 200) 
 	-> Strip(14)
 	-> CheckIPHeader(BADSRC 18.26.4.255)
 	-> GetIPAddress(16)
 	-> rt;
 
-c[7]	->Discard;  //normal-ip-pkt
+c[7]	->Discard;  //normal_ip_pkt
 
 rt[0]	->Discard;
 rt[1]	->Print(rt1, 200)
 	-> DropBroadcasts
       	-> dt1 :: DecIPTTL
       	-> fr1 :: IPFragmenter(300)
-	-> Print(before-arp0, 200) 
+	-> Print(before_arp0, 200) 
 	->[0]arp;
 rt[2]	->Print(rt2, 200) 
 	->[0]pt46;
@@ -125,34 +125,34 @@ rt[3]	->Print(rt3, 200)
 	-> DropBroadcasts
       	-> dt3 :: DecIPTTL
       	-> fr3 :: IPFragmenter(300)
-	-> Print(before-arp0, 200) 
+	-> Print(before_arp0, 200) 
 	->[0]arp;
 
-rt6[0] 	-> Print(route60-ok, 200) -> Discard;
-rt6[1] 	-> Print(route61-ok, 200) 
+rt6[0] 	-> Print(route60_ok, 200) -> Discard;
+rt6[1] 	-> Print(route61_ok, 200) 
 	-> dh1 :: DecIP6HLIM-> [0]nds;
 rt6[2] 	-> dh2 :: DecIP6HLIM 
-	-> Print(route62-ok, 200)  -> Discard;
-rt6[3] 	-> Print(route63-ok, 200) 
+	-> Print(route62_ok, 200)  -> Discard;
+rt6[3] 	-> Print(route63_ok, 200) 
 	-> [0]at;	
-rt6[4] 	-> Print(route64-ok, 200) -> Discard;
+rt6[4] 	-> Print(route64_ok, 200) -> Discard;
 
 dh1[1]	-> ICMP6Error(3ffe:1ce1:2:0:200::1, 3, 0)
 	-> Discard;
 dh2[1]	-> ICMP6Error(3ffe:1ce1:2:0:200::1, 3, 0)
 	-> Discard;
-at[0]  	-> Print(after-at0, 200) 
+at[0]  	-> Print(after_at0, 200) 
 	-> [0]pt64;
-at[1]  	-> Print(after-at1, 200) 
+at[1]  	-> Print(after_at1, 200) 
 	-> CheckIP6Header()
 	-> GetIP6Address(24)
 	-> [0]rt6;
 	
-pt64[0]	-> Print(after-pt640, 200) 
+pt64[0]	-> Print(after_pt640, 200) 
 	-> CheckIPHeader(BADSRC 18.26.4.255 1.255.255.255)
 	-> GetIPAddress(16)
 	-> [0]rt;
-pt46[0]	-> Print(after-pt46, 200) 
+pt46[0]	-> Print(after_pt46, 200) 
 	-> [1]at;
 
 arp[0] 	//-> Print(arp0, 200)
