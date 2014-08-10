@@ -15,7 +15,7 @@
 
 #include "click_lex.h"
 #include "click_yacc.h"
-#include "parser.h"
+#include "click_parser.h"
 
 int main(int argc, char** argv)
 {

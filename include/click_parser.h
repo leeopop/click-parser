@@ -1,12 +1,12 @@
 /*
- * parser.h
+ * click_parser.h
  *
  *  Created on: Aug 10, 2014
  *      Author: leeopop
  */
 
-#ifndef PARSER_H_
-#define PARSER_H_
+#ifndef CLICK_PARSER_H_
+#define CLICK_PARSER_H_
 
 struct click_parseinfo;
 
@@ -25,4 +25,4 @@ void* click_get_module(ParseInfo* info,int index);
 void* click_get_leaf(ParseInfo* info, int index);
 void* click_get_root(ParseInfo* info, int index);
 
-#endif /* PARSER_H_ */
+#endif /* CLICK_PARSER_H_ */

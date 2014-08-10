@@ -18,7 +18,7 @@ EXEC = test_parser
 
 LIBS = 
 LDFLAGS = 
-CFLAGS = -g -O0 -I$(SRC_DIR) -I$(GRAMMAR_DIR)
+CFLAGS = -g -O0 -I$(SRC_DIR) -I$(GRAMMAR_DIR) -Iinclude
 
 DEPS = .make.dep
 

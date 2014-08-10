@@ -9,7 +9,7 @@
 #include "click_yacc.h"
 #include "node.h"
 #include "resource.h"
-#include "parser.h"
+#include "click_parser.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netinet/ether.h>
