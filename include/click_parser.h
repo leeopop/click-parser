@@ -8,6 +8,7 @@
 #ifndef CLICK_PARSER_H_
 #define CLICK_PARSER_H_
 
+#include <stdio.h>
 struct click_parseinfo;
 
 typedef struct click_parseinfo ParseInfo;
