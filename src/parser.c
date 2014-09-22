@@ -10,10 +10,6 @@
 #include "node.h"
 #include "resource.h"
 #include "click_parser.h"
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netinet/ether.h>
-#include <sys/socket.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
