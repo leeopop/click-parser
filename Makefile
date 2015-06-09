@@ -24,7 +24,7 @@ DEPS = .make.dep
 
 .PHONY: all clean
 
-all: $(GRAMMAR_SRC) $(DEPS) $(OUTPUT_DIR)/$(LIB) $(OUTPUT_DIR)/$(TEST)
+all: $(DEPS) $(OUTPUT_DIR)/$(LIB) $(OUTPUT_DIR)/$(TEST)
 
 test: $(GRAMMAR_SRC) $(DEPS) $(TEST)
 
@@ -45,3 +45,6 @@ clean:
 
 $(DEPS): $(GRAMMAR_SRC) $(SRCS) $(HEADERS)
 	@$(CC) $(CFLAGS) -MM $(SRCS) > $(DEPS);
+
+-include .make.dep
+
