@@ -1,8 +1,3 @@
-CC = gcc
-LEX = flex
-YACC = bison
-AR = ar
-
 SRC_DIR = src
 GRAMMAR_DIR = grammar
 OUTPUT_DIR = build
