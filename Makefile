@@ -33,7 +33,7 @@ $(OUTPUT_DIR)/$(LIB): $(OBJS)
 	$(AR) r $@ $(OBJS)
 
 $(OUTPUT_DIR)/$(TEST): $(OUTPUT_DIR)/$(LIB) test/test.o
-	$(CC) $(OBJS) test/test.o -o $@ $(LDFLAGS) $(LIBS) -L$(OUTPUT_DIR) -lclickparser
+	$(CC) $(OBJS) test/test.o $(LDFLAGS) $(LIBS) -L$(OUTPUT_DIR) -lclickparser -o $@
 
 clean:
 	rm -f $(OUTPUT_DIR)/$(LIB) $(OUTPUT_DIR)/$(TEST) test/*.o $(SRC_DIR)/*.o $(DEPS) $(GRAMMAR_DIR)/*.o $(GRAMMAR_DIR)/*.c $(GRAMMAR_DIR)/*.h
