@@ -1,5 +1,6 @@
+install: make bison flex
 language: cpp
 compiler:
   - clang
   - gcc
-script: scons
+script: make
