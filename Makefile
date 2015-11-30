@@ -3,7 +3,8 @@ GRAMMAR_DIR = grammar
 OUTPUT_DIR = build
 
 GRAMMAR = $(GRAMMAR_DIR)/click.l  $(GRAMMAR_DIR)/click.y
-GRAMMAR_SRC = $(GRAMMAR_DIR)/click_lex.c $(GRAMMAR_DIR)/click_yacc.c $(GRAMMAR_DIR)/click_lex.h $(GRAMMAR_DIR)/click_yacc.h
+GRAMMAR_SRC = $(GRAMMAR_DIR)/click_lex.c $(GRAMMAR_DIR)/click_yacc.c
+GRAMMAR_HEADER = $(GRAMMAR_DIR)/click_lex.h $(GRAMMAR_DIR)/click_yacc.h
 
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(SRCS:.c=.o) $(GRAMMAR_SRC:.c=.o)
@@ -21,11 +22,11 @@ DEPS = .make.dep
 
 all: $(DEPS) $(OUTPUT_DIR)/$(LIB) $(OUTPUT_DIR)/$(TEST)
 
-test: $(GRAMMAR_SRC) $(DEPS) $(TEST)
+test: $(GRAMMAR_SRC) $(GRAMMAR_HEADER) $(DEPS) $(TEST)
 
-lib: $(GRAMMAR_SRC) $(DEPS) $(LIB)
+lib: $(GRAMMAR_SRC) $(GRAMMAR_HEADER) $(DEPS) $(LIB)
 
-$(GRAMMAR_SRC): $(GRAMMAR)
+$(GRAMMAR_SRC) $(GRAMMAR_HEADER): $(GRAMMAR)
 	$(YACC) --defines=$(GRAMMAR_DIR)/click_yacc.h --output=$(GRAMMAR_DIR)/click_yacc.c $(GRAMMAR_DIR)/click.y
 	$(LEX) --header-file=$(GRAMMAR_DIR)/click_lex.h --outfile=$(GRAMMAR_DIR)/click_lex.c -Cr $(GRAMMAR_DIR)/click.l
 
