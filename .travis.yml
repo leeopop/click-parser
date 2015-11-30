@@ -1,6 +1,6 @@
 before_install:
-	- sudo apt-get update -qq
-	- sudo apt-get install -qq bison flex
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq bison flex
 language: cpp
 compiler:
   - clang
